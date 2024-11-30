@@ -21,9 +21,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useSession } from "@/hooks/use-session";
 import { toast } from "@/hooks/use-toast";
 import { authClient } from "@/lib/auth-client";
 import { formSchema } from "@/lib/auth-schema";
+import { redirect } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 
@@ -37,8 +39,17 @@ export default function SignUp() {
     },
   });
 
+  const { session, isLoading } = useSession();
+
+  if (isLoading) {
+    return <div>Loading...</div>;
+  }
+
+  if (session) redirect("/dashboard");
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     const { name, email, password } = values;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { data, error } = await authClient.signUp.email(
       {
         email,
