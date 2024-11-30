@@ -21,6 +21,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { toast } from "@/hooks/use-toast";
+import { authClient } from "@/lib/auth-client";
 import { signInFormSchema } from "@/lib/auth-schema";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
@@ -35,7 +37,31 @@ export default function SignIn() {
   });
 
   async function onSubmit(values: z.infer<typeof signInFormSchema>) {
-    console.log("submit", values);
+    const { email, password } = values;
+    const { data, error } = await authClient.signIn.email(
+      {
+        email,
+        password,
+        callbackURL: "/dashboard",
+      },
+      {
+        onRequest: () => {
+          toast({
+            title: "Please wait...",
+          });
+        },
+        onSuccess: () => {
+          form.reset();
+        },
+        onError: (ctx) => {
+          // alert(ctx.error.message);
+          toast({
+            title: ctx.error.message,
+            variant: "destructive",
+          });
+        },
+      }
+    );
   }
 
   return (
@@ -90,7 +116,7 @@ export default function SignIn() {
       <CardFooter className="flex justify-center">
         <p className="text-sm text-muted-foreground">
           Don&apos;t have an account yet?{" "}
-          <Link href="/sign-up" className="text-primary hover:underline">
+          <Link href="/signup" className="text-primary hover:underline">
             Sign up
           </Link>
         </p>
