@@ -9,7 +9,7 @@ export async function getCustomers() {
 }
 
 export async function createCustomer(
-  prevState: { message: string },
+  prevState: { message: string; error: string },
   formData: FormData
 ) {
   const parse = customerSchema.safeParse({
@@ -19,7 +19,8 @@ export async function createCustomer(
   if (!parse.success) {
     return {
       ...prevState,
-      message: "Failed to create customer",
+      error: "Failed to create customer",
+      message: "",
     };
   }
 
@@ -28,8 +29,12 @@ export async function createCustomer(
   try {
     const customer = await prisma.customer.create({ data });
     revalidatePath("/customers");
-    return { message: `Added customer: ${customer.id}` };
+    return { message: `Added customer: ${customer.id}`, error: "" };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
-    return { message: `Failed to create customer: ${e}` };
+    return {
+      message: "",
+      error: `Failed to create customer: ${data.name}. Please make sure customer with this name is not in the data base.`,
+    };
   }
 }

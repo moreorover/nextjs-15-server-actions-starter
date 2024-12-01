@@ -16,28 +16,26 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useActionState } from "react";
 
-import { useFormStatus } from "react-dom";
+import { AlertCircle, Loader2 } from "lucide-react";
 import { useForm } from "react-hook-form";
-
-function SubmitButton() {
-  const { pending } = useFormStatus();
-
-  return (
-    <button className="w-full" type="submit" aria-disabled={pending}>
-      Create
-    </button>
-  );
-}
+import { Alert, AlertDescription } from "./ui/alert";
+import { Button } from "./ui/button";
 
 type Props = {
   className: string;
 };
 
+const initialState = {
+  message: "",
+  error: "",
+};
+
 export default function AddCustomerForm({ className }: Props) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [state, formAction, isPending] = useActionState(createCustomer, {
-    message: "",
-  });
+  const [state, formAction, isPending] = useActionState(
+    createCustomer,
+    initialState
+  );
 
   const form = useForm<AddCustomerFormFields>({
     resolver: zodResolver(customerSchema),
@@ -74,7 +72,22 @@ export default function AddCustomerForm({ className }: Props) {
             </FormItem>
           )}
         />
-        <SubmitButton />
+        <Button type="submit" disabled={isPending}>
+          {isPending ? (
+            <>
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+              Creating...
+            </>
+          ) : (
+            "Create"
+          )}
+        </Button>
+        {state.error && (
+          <Alert variant="destructive" className="py-2 px-4">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{state.error}</AlertDescription>
+          </Alert>
+        )}
       </form>
     </Form>
   );
