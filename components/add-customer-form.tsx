@@ -29,6 +29,7 @@ function SubmitButton() {
 }
 
 export default function AddCustomerForm() {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [state, formAction] = useActionState(createCustomer, {
     message: "",
   });
@@ -39,10 +40,6 @@ export default function AddCustomerForm() {
       name: "",
     },
   });
-
-  // async function submit(formData: FormData) {
-  //   ref.current?.reset();
-  // }
 
   return (
     <Form {...form}>
