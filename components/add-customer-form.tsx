@@ -12,6 +12,7 @@ import { Input } from "@/components/ui/input";
 import { handleFormSubmit } from "@/lib/forms";
 import { AddCustomerFormFields, customerSchema } from "@/lib/schemas";
 import { createCustomer } from "@/lib/useCustomer";
+import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useActionState } from "react";
 
@@ -28,9 +29,13 @@ function SubmitButton() {
   );
 }
 
-export default function AddCustomerForm() {
+type Props = {
+  className: string;
+};
+
+export default function AddCustomerForm({ className }: Props) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [state, formAction] = useActionState(createCustomer, {
+  const [state, formAction, isPending] = useActionState(createCustomer, {
     message: "",
   });
 
@@ -46,7 +51,7 @@ export default function AddCustomerForm() {
       <form
         action={formAction}
         onSubmit={handleFormSubmit<AddCustomerFormFields>(form)}
-        className="space-y-4"
+        className={cn("space-y-4", className)}
       >
         {/* <form
         action={async (formData: FormData) => {

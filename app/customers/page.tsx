@@ -1,4 +1,4 @@
-import AddCustomerForm from "@/components/add-customer-form";
+import { NewCustomerSheet } from "@/components/add-customer-form-sheet";
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { headers } from "next/headers";
@@ -23,7 +23,7 @@ export default async function CustomersPage() {
           <li key={customer.id}>{customer.name}</li>
         ))}
       </ul>
-      <AddCustomerForm />
+      <NewCustomerSheet />
     </div>
   );
 }
