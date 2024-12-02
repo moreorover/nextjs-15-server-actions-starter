@@ -1,8 +1,16 @@
-import ClientComponent from "@/components/client-component";
+import {
+  Table,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
+import { getCustomers } from "@/data-access/customer";
 import { auth } from "@/lib/auth";
-import prisma from "@/lib/prisma";
 import { headers } from "next/headers";
+import Link from "next/link";
 import { redirect } from "next/navigation";
+import CustomerRow from "./CustomerRow";
 
 export default async function CustomersPage() {
   const session = await auth.api.getSession({
@@ -13,17 +21,27 @@ export default async function CustomersPage() {
     return redirect("/");
   }
 
-  const customers = await prisma.customer.findMany();
+  const customers = await getCustomers();
 
   return (
-    <div className="mt-10 text-center">
-      <h1 className="text-2xl font-bold underline">Welcome to the dashboard</h1>
-      <ul>
-        {customers.map((customer) => (
-          <li key={customer.id}>{customer.name}</li>
-        ))}
-      </ul>
-      <ClientComponent />
+    <div className="p-8 container">
+      <h1 className="text-2xl">Customers List</h1>
+      <Link href="/customers/new">New</Link>
+      <Table>
+        <TableHeader>
+          <TableRow>
+            <TableHead>id</TableHead>
+            <TableHead>Name</TableHead>
+            <TableHead>Edit</TableHead>
+            <TableHead>Delete</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
+          {customers.map((customer) => (
+            <CustomerRow key={customer.id} customer={customer} />
+          ))}
+        </TableBody>
+      </Table>
     </div>
   );
 }

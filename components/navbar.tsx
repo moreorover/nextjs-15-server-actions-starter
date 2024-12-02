@@ -10,6 +10,14 @@ export default async function Navbar() {
     headers: await headers(),
   });
 
+  async function signOut() {
+    "use server";
+    await auth.api.signOut({
+      headers: await headers(),
+    });
+    redirect("/");
+  }
+
   return (
     <div className="border-b px-4">
       <div className="flex items-center justify-between mx-auto max-w-4xl h-16">
@@ -20,15 +28,7 @@ export default async function Navbar() {
 
         <div>
           {session ? (
-            <form
-              action={async () => {
-                "use server";
-                await auth.api.signOut({
-                  headers: await headers(),
-                });
-                redirect("/");
-              }}
-            >
+            <form action={signOut}>
               <Button type="submit">Sign Out</Button>
             </form>
           ) : (
