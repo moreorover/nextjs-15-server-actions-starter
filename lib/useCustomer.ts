@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import prisma from "./prisma";
-import { customerSchema } from "./schemas";
+import { Customer, customerSchema } from "./schemas";
 
 export async function getCustomers() {
   return await prisma.customer.findMany();
@@ -13,7 +13,11 @@ export async function getCustomer(id: string) {
 }
 
 export async function updateCustomer(
-  prevState: { message: string; error: string },
+  prevState: {
+    message: string;
+    error: string;
+    zodErrors: { id?: string[] | undefined; name?: string[] | undefined };
+  },
   formData: FormData
 ) {
   const parse = customerSchema.safeParse({
@@ -26,6 +30,7 @@ export async function updateCustomer(
       ...prevState,
       error: "Failed to update customer",
       message: "",
+      zodErrors: parse.error.flatten().fieldErrors,
     };
   }
 
@@ -36,12 +41,55 @@ export async function updateCustomer(
       data: { name: data.name },
       where: { id: data.id },
     });
-    return { message: `Updated customer: ${customer.id}`, error: "" };
+    return {
+      message: `Updated customer: ${customer.id}`,
+      error: "",
+      zodErrors: { id: undefined, name: undefined },
+    };
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
   } catch (e) {
     return {
       message: "",
       error: `Failed to update customer: ${data.name}. Please make sure customer with this name is not in the data base.`,
+      zodErrors: { id: undefined, name: undefined },
+    };
+  }
+}
+
+type ActionResponse = {
+  type: "SUCCESS" | "ERROR";
+  message: string;
+};
+
+export async function updateCustomerValues(
+  customer: Customer
+): Promise<ActionResponse> {
+  await new Promise((resolve) => {
+    setTimeout(resolve, 1000);
+  });
+  try {
+    const parse = customerSchema.safeParse(customer);
+
+    if (!parse.success) {
+      return {
+        type: "ERROR",
+        message: "Incorrect data received.",
+      };
+    }
+    const c = await prisma.customer.update({
+      data: { name: customer.name },
+      where: { id: customer.id },
+    });
+    revalidatePath("/customers");
+    return {
+      message: `Updated customer: ${c.id}`,
+      type: "SUCCESS",
+    };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (e) {
+    return {
+      type: "ERROR",
+      message: "Something went wrong!",
     };
   }
 }

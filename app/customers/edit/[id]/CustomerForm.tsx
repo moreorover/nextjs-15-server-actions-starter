@@ -9,16 +9,16 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { handleFormSubmit } from "@/lib/forms";
 import { Customer, customerSchema } from "@/lib/schemas";
-import { updateCustomer } from "@/lib/useCustomer";
 import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useActionState } from "react";
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
-import { AlertCircle, Loader2 } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import { updateCustomerValues } from "@/lib/useCustomer";
+import { Loader2 } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { useForm } from "react-hook-form";
 
 type Props = {
@@ -26,31 +26,41 @@ type Props = {
   className?: string;
 };
 
-const initialState = {
-  message: "",
-  error: "",
-};
-
 export default function CustomerForm({ customer, className }: Props) {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [state, formAction, isPending] = useActionState(
-    updateCustomer,
-    initialState
-  );
+  const router = useRouter();
+  const { toast } = useToast();
+  const [submitting, setSubmitting] = useState(false);
 
   const form = useForm<Customer>({
-    // mode: "onBlur",
     resolver: zodResolver(customerSchema),
     defaultValues: {
       ...customer,
     },
   });
 
+  async function onSubmit(values: Customer) {
+    setSubmitting(true);
+    const response = await updateCustomerValues(values);
+    setSubmitting(false);
+
+    if (response.type === "ERROR") {
+      toast({
+        variant: "destructive",
+        description: response.message,
+      });
+    } else {
+      toast({
+        variant: "default",
+        description: response.message,
+      });
+      router.back();
+    }
+  }
+
   return (
     <Form {...form}>
       <form
-        action={formAction}
-        onSubmit={handleFormSubmit<Customer>(form)}
+        onSubmit={form.handleSubmit(onSubmit)}
         className={cn("space-y-4", className)}
       >
         <FormField
@@ -73,13 +83,14 @@ export default function CustomerForm({ customer, className }: Props) {
               <FormLabel>Name</FormLabel>
               <FormControl>
                 <Input placeholder="John Doe" {...field} />
+                {/* <ZodErrors error={state?.zodErrors?.name} /> */}
               </FormControl>
               <FormMessage />
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={isPending}>
-          {isPending ? (
+        <Button type="submit" disabled={submitting}>
+          {submitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
               Updating...
@@ -88,12 +99,12 @@ export default function CustomerForm({ customer, className }: Props) {
             "Update"
           )}
         </Button>
-        {state.error && (
+        {/* {state.error && (
           <Alert variant="destructive" className="py-2 px-4">
             <AlertCircle className="h-4 w-4" />
             <AlertDescription>{state.error}</AlertDescription>
           </Alert>
-        )}
+        )} */}
       </form>
     </Form>
   );
