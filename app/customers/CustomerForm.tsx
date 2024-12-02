@@ -15,7 +15,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { updateCustomerValues } from "@/lib/useCustomer";
+import { createCustomerValues, updateCustomerValues } from "@/lib/useCustomer";
 import { Loader2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
@@ -40,7 +40,9 @@ export default function CustomerForm({ customer, className }: Props) {
 
   async function onSubmit(values: Customer) {
     setSubmitting(true);
-    const response = await updateCustomerValues(values);
+    const response = customer.id
+      ? await updateCustomerValues(values)
+      : await createCustomerValues(values);
     setSubmitting(false);
 
     if (response.type === "ERROR") {
@@ -63,18 +65,20 @@ export default function CustomerForm({ customer, className }: Props) {
         onSubmit={form.handleSubmit(onSubmit)}
         className={cn("space-y-4", className)}
       >
-        <FormField
-          control={form.control}
-          name="id"
-          render={({ field }) => (
-            <FormItem className="sr-only">
-              <FormLabel>ID</FormLabel>
-              <FormControl>
-                <Input type="hidden" {...field} />
-              </FormControl>
-            </FormItem>
-          )}
-        />
+        {customer.id && (
+          <FormField
+            control={form.control}
+            name="id"
+            render={({ field }) => (
+              <FormItem className="sr-only">
+                <FormLabel>ID</FormLabel>
+                <FormControl>
+                  <Input type="hidden" {...field} />
+                </FormControl>
+              </FormItem>
+            )}
+          />
+        )}
         <FormField
           control={form.control}
           name="name"
@@ -93,10 +97,10 @@ export default function CustomerForm({ customer, className }: Props) {
           {submitting ? (
             <>
               <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-              Updating...
+              {customer.id ? "Updating..." : "Creating..."}
             </>
           ) : (
-            "Update"
+            "Submit"
           )}
         </Button>
         {/* {state.error && (

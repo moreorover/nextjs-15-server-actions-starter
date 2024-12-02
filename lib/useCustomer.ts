@@ -82,7 +82,39 @@ export async function updateCustomerValues(
     });
     revalidatePath("/customers");
     return {
-      message: `Updated customer: ${c.id}`,
+      message: `Updated customer: ${c.name}`,
+      type: "SUCCESS",
+    };
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  } catch (e) {
+    return {
+      type: "ERROR",
+      message: "Something went wrong!",
+    };
+  }
+}
+
+export async function createCustomerValues(
+  customer: Customer
+): Promise<ActionResponse> {
+  await new Promise((resolve) => {
+    setTimeout(resolve, 1000);
+  });
+  try {
+    const parse = customerSchema.safeParse(customer);
+
+    if (!parse.success) {
+      return {
+        type: "ERROR",
+        message: "Incorrect data received.",
+      };
+    }
+    const c = await prisma.customer.create({
+      data: { name: customer.name },
+    });
+    revalidatePath("/customers");
+    return {
+      message: `Created customer: ${c.name}`,
       type: "SUCCESS",
     };
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
