@@ -5,7 +5,6 @@ import {
   DialogContent,
   DialogDescription,
   DialogHeader,
-  DialogOverlay,
   DialogTitle,
 } from "@/components/ui/dialog";
 import { useRouter } from "next/navigation";
@@ -25,15 +24,15 @@ export function Modal({ title, description, children }: Props) {
 
   return (
     <Dialog defaultOpen={true} open={true} onOpenChange={handleOpenChange}>
-      <DialogOverlay>
-        <DialogContent className="overflow-y-hidden">
-          <DialogHeader>
-            <DialogTitle>{title}</DialogTitle>
-            <DialogDescription>{description}</DialogDescription>
-          </DialogHeader>
-          {children}
-        </DialogContent>
-      </DialogOverlay>
+      {/* <DialogOverlay> */}
+      <DialogContent className="overflow-y-hidden">
+        <DialogHeader>
+          <DialogTitle>{title}</DialogTitle>
+          <DialogDescription>{description}</DialogDescription>
+        </DialogHeader>
+        {children}
+      </DialogContent>
+      {/* </DialogOverlay> */}
     </Dialog>
   );
 }

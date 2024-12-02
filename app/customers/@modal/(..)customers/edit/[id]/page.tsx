@@ -1,15 +1,12 @@
-// import CustomerForm from "@/app/users/edit/[id]/UserForm"
+import CustomerForm from "@/app/customers/CustomerForm";
 import { Modal } from "@/components/Modal";
 import { getCustomer } from "@/lib/useCustomer";
-import CustomerForm from "./CustomerForm";
 
-type Props = {
-  params: {
-    id: string;
-  };
-};
-
-export default async function EditCustomer({ params }: Props) {
+export default async function EditCustomerModal({
+  params,
+}: {
+  params: Promise<{ id: string }>;
+}) {
   const { id } = await params;
 
   const customer = await getCustomer(id);
@@ -18,7 +15,7 @@ export default async function EditCustomer({ params }: Props) {
     return (
       <Modal title="Not found" description="No Customer Found for that ID">
         <div className="p-8 max-w-md space-y-2">
-          {/* <h1 className="text-2xl">No Customer Found for that ID.</h1> */}
+          <h1 className="text-2xl">No Customer Found for that ID.</h1>
         </div>
       </Modal>
     );

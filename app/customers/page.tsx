@@ -8,6 +8,7 @@ import {
 import { auth } from "@/lib/auth";
 import prisma from "@/lib/prisma";
 import { headers } from "next/headers";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import CustomerRow from "./CustomerRow";
 
@@ -25,11 +26,13 @@ export default async function CustomersPage() {
   return (
     <div className="p-8 container">
       <h1 className="text-2xl">Users List</h1>
+      <Link href="/customers/new">New</Link>
       <Table>
         <TableHeader>
           <TableRow>
             <TableHead>id</TableHead>
             <TableHead>Name</TableHead>
+            <TableHead>Edit</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
