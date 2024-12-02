@@ -6,7 +6,7 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { auth } from "@/lib/auth";
-import prisma from "@/lib/prisma";
+import { getCustomers } from "@/lib/useCustomer";
 import { headers } from "next/headers";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -21,7 +21,7 @@ export default async function CustomersPage() {
     return redirect("/");
   }
 
-  const customers = await prisma.customer.findMany();
+  const customers = await getCustomers();
 
   return (
     <div className="p-8 container">
@@ -32,7 +32,6 @@ export default async function CustomersPage() {
           <TableRow>
             <TableHead>id</TableHead>
             <TableHead>Name</TableHead>
-            <TableHead>Edit</TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
