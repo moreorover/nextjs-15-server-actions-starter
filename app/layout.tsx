@@ -1,7 +1,7 @@
 import Navbar from "@/components/navbar";
+import { Toaster } from "@/components/ui/toaster";
 import type { Metadata } from "next";
 import "./globals.css";
-import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -10,14 +10,17 @@ export const metadata: Metadata = {
 
 export default function RootLayout({
   children,
+  modal,
 }: Readonly<{
   children: React.ReactNode;
+  modal: React.ReactNode;
 }>) {
   return (
     <html lang="en">
       <body className={`antialiased`}>
         <Navbar />
         {children}
+        {modal}
         <Toaster />
       </body>
     </html>

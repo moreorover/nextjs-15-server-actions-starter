@@ -25,7 +25,7 @@ export default async function CustomersPage() {
 
   return (
     <div className="p-8 container">
-      <h1 className="text-2xl">Users List</h1>
+      <h1 className="text-2xl">Customers List</h1>
       <Link href="/customers/new">New</Link>
       <Table>
         <TableHeader>

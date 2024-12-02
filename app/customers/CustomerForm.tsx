@@ -103,12 +103,6 @@ export default function CustomerForm({ customer, className }: Props) {
             "Submit"
           )}
         </Button>
-        {/* {state.error && (
-          <Alert variant="destructive" className="py-2 px-4">
-            <AlertCircle className="h-4 w-4" />
-            <AlertDescription>{state.error}</AlertDescription>
-          </Alert>
-        )} */}
       </form>
     </Form>
   );
