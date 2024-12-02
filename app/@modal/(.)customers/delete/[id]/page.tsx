@@ -1,4 +1,4 @@
-import CustomerForm from "@/app/customers/CustomerForm";
+import CustomerDeleteForm from "@/app/customers/CustomerDeleteForm";
 import { Modal } from "@/components/Modal";
 import { getCustomer } from "@/data-access/customer";
 
@@ -22,9 +22,9 @@ export default async function EditCustomerModal({
   }
 
   return (
-    <Modal title="Update customer" description="Update customer as needed.">
+    <Modal title="Delete customer" description="Deleted customer as needed.">
       <div className="p-2 max-w-md">
-        <CustomerForm customer={customer} />
+        <CustomerDeleteForm customer={customer} />
       </div>
     </Modal>
   );

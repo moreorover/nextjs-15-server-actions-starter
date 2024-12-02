@@ -6,7 +6,7 @@ export default async function NewCustomerModal() {
 
   return (
     <Modal title="New customer" description="Create customer as needed.">
-      <div className="p-8 max-w-md space-y-2">
+      <div className="p-2 max-w-md">
         <CustomerForm customer={customer} />
       </div>
     </Modal>
